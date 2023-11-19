@@ -5,43 +5,37 @@ import {
 } from "@prisma/client/runtime/library";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
+import { ErrorType } from "../types/error.types";
 
-export function transactionErrorHandler(error: Error) {
+export function transactionErrorHandler(error: Error): ErrorType {
   if (error instanceof PrismaClientKnownRequestError) {
     switch (error.code) {
       case "P2002":
-        return NextResponse.json(
-          { error: "Duplicate entry detected." },
-          { status: 400 }
-        );
+        return { errorMessage: "Duplicate entry detected.", statusCode: 400 };
+
         break;
       case "P2025":
-        return NextResponse.json(
-          { error: "Record not found." },
-          { status: 404 }
-        );
+        return { errorMessage: "Record not found.", statusCode: 404 };
+
         break;
       default:
-        return NextResponse.json(
-          { error: "An unexpected error occurred." },
-          { status: 500 }
-        );
+        return {
+          errorMessage: "An unexpected error occurred.",
+          statusCode: 500,
+        };
         break;
     }
   } else if (error instanceof PrismaClientUnknownRequestError) {
-    return NextResponse.json(
-      { error: "An unexpected error occurred." },
-      { status: 500 }
-    );
+    return { errorMessage: "An unexpected error occurred.", statusCode: 500 };
   } else if (error instanceof PrismaClientValidationError) {
-    return NextResponse.json({ error: "Validation error." }, { status: 400 });
+    return { errorMessage: "Validation error.", statusCode: 400 };
   } else if (error instanceof ZodError) {
     let errorMessage = "";
     error.issues.forEach((issue) => {
       errorMessage = errorMessage + issue.path[0] + ": " + issue.message + ". ";
     });
-    return NextResponse.json({ error: errorMessage }, { status: 400 });
+    return { errorMessage: errorMessage, statusCode: 400 };
   } else {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return { errorMessage: error.message, statusCode: 500 };
   }
 }

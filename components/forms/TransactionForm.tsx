@@ -15,34 +15,61 @@ import { Button } from "../ui/button";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { TransactionType } from "@/lib/types/transaction.types";
 import { createTransaction } from "@/lib/actions/transaction.actions";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import { isErrorType } from "@/lib/type-guards/error.type-guard";
 
 function TransactionForm({ walletKsuid }: { walletKsuid: string }) {
+  const queryClient = useQueryClient();
   const TransactionValidation = z.object({
     description: z.string().min(1),
     amount: z.coerce.number().min(1),
     type: z.enum(["CREDIT", "DEBIT"], {
-      required_error: "You need to select a notification type.",
+      required_error: "You need to select a transaction type.",
     }),
   });
 
   const form = useForm<z.infer<typeof TransactionValidation>>({
     resolver: zodResolver(TransactionValidation),
+    defaultValues: {
+      description: "",
+      amount: 100,
+    },
   });
 
   const mutation = useMutation({
-    mutationFn: (values: z.infer<typeof TransactionValidation>) =>
-      createTransaction(values, walletKsuid),
-
-    onError: () => {},
+    mutationFn: async (values: z.infer<typeof TransactionValidation>) => {
+      if (values.type === "DEBIT") values.amount = -values.amount;
+      const transaction = await createTransaction(values, walletKsuid);
+      if (isErrorType(transaction)) {
+        throw new Error(transaction.errorMessage);
+      }
+      return transaction;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["transactions"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["walletTotal"],
+      });
+      toast.success("Transaction created");
+      //show toaster message
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
   });
 
   return (
-    <div>
-      <div>Submit your transaction</div>
+    <div className="flex flex-col gap-3">
+      <h1 className="text-2xl">Submit your transaction</h1>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit((values) => mutation.mutate(values))}>
+        <form
+          onSubmit={form.handleSubmit((values) => mutation.mutate(values))}
+          className="flex flex-col gap-2"
+        >
           <FormField
             control={form.control}
             name="description"
@@ -93,17 +120,17 @@ function TransactionForm({ walletKsuid }: { walletKsuid: string }) {
                     defaultValue={field.value as TransactionType}
                     required
                   >
-                    <FormItem className="">
+                    <FormItem className="flex gap-2 justify-start items-center">
                       <FormControl>
                         <RadioGroupItem value="DEBIT" />
                       </FormControl>
-                      <FormLabel className="font-normal">DEBIT</FormLabel>
+                      <FormLabel className="mt-0">Debit</FormLabel>
                     </FormItem>
-                    <FormItem className="">
+                    <FormItem className="flex gap-2 justify-start items-center">
                       <FormControl>
                         <RadioGroupItem value="CREDIT" />
                       </FormControl>
-                      <FormLabel className="font-normal">CREDIT</FormLabel>
+                      <FormLabel className="mt-0">Credit</FormLabel>
                     </FormItem>
                   </RadioGroup>
                 </FormControl>
@@ -111,8 +138,12 @@ function TransactionForm({ walletKsuid }: { walletKsuid: string }) {
               </FormItem>
             )}
           />
-          <Button type="submit" className="comment-form_btn">
-            Reply
+          <Button
+            type="submit"
+            className="comment-form_btn mt-3"
+            disabled={mutation.isPending}
+          >
+            Create Transaction
           </Button>
         </form>
       </Form>

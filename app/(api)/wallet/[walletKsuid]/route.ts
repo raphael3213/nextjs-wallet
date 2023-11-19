@@ -1,4 +1,6 @@
 import { fetchWallet } from "@/lib/actions/wallet.action";
+import { isErrorType } from "@/lib/guards/error.guard";
+import { routeErrorHandler } from "@/lib/handlers/route.handler";
 import { walletErrorHandler } from "@/lib/handlers/wallet.handler";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -12,8 +14,17 @@ export async function GET(
     const walletKsuid = walletKsuidSchema.parse(params.walletKsuid);
 
     const wallet = await fetchWallet(walletKsuid);
-    return NextResponse.json(wallet, { status: 200 });
+    if (isErrorType(wallet)) {
+      return NextResponse.json(
+        { error: wallet.errorMessage },
+        { status: wallet.statusCode }
+      );
+    }
+    return NextResponse.json(wallet);
   } catch (error) {
-    return walletErrorHandler(error as Error);
+    const { errorMessage, statusCode } = await routeErrorHandler(
+      error as Error
+    );
+    return NextResponse.json({ error: errorMessage }, { status: statusCode });
   }
 }

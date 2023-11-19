@@ -1,4 +1,6 @@
 import { fetchAllTransaction } from "@/lib/actions/transaction.actions";
+import { isErrorType } from "@/lib/guards/error.guard";
+import { routeErrorHandler } from "@/lib/handlers/route.handler";
 import { transactionErrorHandler } from "@/lib/handlers/transaction.handler";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -13,8 +15,17 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(params.get("limit") || "10");
 
     const transactions = await fetchAllTransaction(walletKsuid, skip, limit);
-    return NextResponse.json(transactions, { status: 200 });
+    if (isErrorType(transactions)) {
+      return NextResponse.json(
+        { error: transactions.errorMessage },
+        { status: transactions.statusCode }
+      );
+    }
+    return NextResponse.json(transactions);
   } catch (error) {
-    return transactionErrorHandler(error as Error);
+    const { errorMessage, statusCode } = await routeErrorHandler(
+      error as Error
+    );
+    return NextResponse.json({ error: errorMessage }, { status: statusCode });
   }
 }

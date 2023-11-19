@@ -6,6 +6,7 @@ import { dateNow, destructureObject, getKsuid } from "../utils";
 import { CreateTransactionParams } from "../types/transaction.types";
 import { type } from "os";
 import { Decimal } from "@prisma/client/runtime/library";
+import { transactionErrorHandler } from "../handlers/transaction.handler";
 
 const prisma = new PrismaClient();
 
@@ -39,8 +40,7 @@ export async function createTransaction(
           Number(wallet.balance) < absouluteAmount &&
           transactionType === "DEBIT"
         ) {
-          // do what here ?
-          throw new Error("NOT_ENOUGH_BALANCE");
+          throw new Error("Not Enough Balance");
         }
 
         const transaction = await prisma.transaction.create({
@@ -75,7 +75,7 @@ export async function createTransaction(
     );
     return result;
   } catch (error) {
-    throw error;
+    return transactionErrorHandler(error as Error);
   } finally {
     await prisma.$disconnect();
   }
@@ -84,7 +84,7 @@ export async function createTransaction(
 export async function fetchAllTransaction(
   walletKsuid: string,
   skip: number,
-  limit: number
+  limit?: number
 ) {
   try {
     prisma.$connect();
@@ -107,7 +107,7 @@ export async function fetchAllTransaction(
             description: true,
             type: true,
             createdAt: true,
-            updatedAt: true,
+            updatedAt: false,
           },
         },
       },
@@ -115,7 +115,7 @@ export async function fetchAllTransaction(
 
     return wallet.transactions;
   } catch (error) {
-    throw error; // to be removed
+    return transactionErrorHandler(error as Error);
   } finally {
     prisma.$disconnect();
   }

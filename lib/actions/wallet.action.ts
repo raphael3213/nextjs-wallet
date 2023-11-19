@@ -3,11 +3,11 @@
 import { PrismaClient } from "@prisma/client";
 import { CreateWalletParams } from "../types/wallet.types";
 import { dateNow, getKsuid } from "../utils";
+import { walletErrorHandler } from "../handlers/wallet.handler";
 
 const prisma = new PrismaClient();
 
 export async function createWallet(createWalletParams: CreateWalletParams) {
-  // change this to two function
   try {
     await prisma.$connect();
 
@@ -17,11 +17,10 @@ export async function createWallet(createWalletParams: CreateWalletParams) {
     let wallet;
 
     if (createWalletParams.balance) {
-      //create function to return this object
       const transaction = {
         balance: 0,
         amount: createWalletParams.balance,
-        description: "INITIAL_CREDIT",
+        description: "Initial Credit",
         type: "CREDIT",
         createdAt: transactionTime,
         updatedAt: transactionTime,
@@ -68,7 +67,7 @@ export async function createWallet(createWalletParams: CreateWalletParams) {
 
     return wallet;
   } catch (error) {
-    throw error;
+    return walletErrorHandler(error as Error);
   } finally {
     await prisma.$disconnect();
   }
@@ -91,7 +90,7 @@ export async function fetchWallet(walletKsuid: string) {
     }))!;
     return wallet;
   } catch (error) {
-    throw error;
+    return walletErrorHandler(error as Error);
   } finally {
     await prisma.$disconnect();
   }

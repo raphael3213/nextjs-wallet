@@ -3,18 +3,18 @@ import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
 function useLocalStorageWallet() {
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, isSuccess } = useQuery({
     queryKey: ["wallet"],
     queryFn: async () => {
       if (localStorage.getItem("wallet")) {
-        return localStorage.getItem("wallet");
+        return localStorage.getItem("wallet") as string;
       } else {
         return null;
       }
     },
   });
 
-  return { data, isLoading, isError } ;
+  return { data, isLoading, isError, isSuccess };
 }
 
 export default useLocalStorageWallet;
