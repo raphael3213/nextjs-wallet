@@ -2,7 +2,7 @@
 
 import { PrismaClient } from "@prisma/client";
 import { CreateWalletParams } from "../types/wallet.types";
-import { dateNow, destructureObject, getKsuid } from "../utils";
+import { dateNow, getKsuid } from "../utils";
 
 const prisma = new PrismaClient();
 
@@ -45,9 +45,7 @@ export async function createWallet(createWalletParams: CreateWalletParams) {
           createdAt: true,
           updatedAt: true,
           ksuid: true,
-          
         },
-        
       });
     } else {
       wallet = await prisma.wallet.create({

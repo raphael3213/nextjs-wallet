@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
 function useLocalStorageWallet() {
-  const { data } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["wallet"],
     queryFn: async () => {
       if (localStorage.getItem("wallet")) {
@@ -14,7 +14,7 @@ function useLocalStorageWallet() {
     },
   });
 
-  return data;
+  return { data, isLoading, isError } ;
 }
 
 export default useLocalStorageWallet;
