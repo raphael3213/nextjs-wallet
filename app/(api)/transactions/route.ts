@@ -1,5 +1,5 @@
 import { fetchAllTransaction } from "@/lib/actions/transaction.actions";
-import { isErrorType } from "@/lib/guards/error.guard";
+import { isErrorType } from "@/lib/type-guards/error.type-guard";
 import { routeErrorHandler } from "@/lib/handlers/route.handler";
 import { transactionErrorHandler } from "@/lib/handlers/transaction.handler";
 import { NextRequest, NextResponse } from "next/server";

@@ -1,5 +1,5 @@
 import { fetchWallet } from "@/lib/actions/wallet.action";
-import { isErrorType } from "@/lib/guards/error.guard";
+import { isErrorType } from "@/lib/type-guards/error.type-guard";
 import { routeErrorHandler } from "@/lib/handlers/route.handler";
 import { walletErrorHandler } from "@/lib/handlers/wallet.handler";
 import { NextRequest, NextResponse } from "next/server";
