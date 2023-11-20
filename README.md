@@ -1,17 +1,34 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+The API Collection is documented in this postman document : 
+
+https://documenter.getpostman.com/view/29224684/2s9Ye8gEuq
+
 ## Getting Started
 
-First, run the development server:
+Set up .env file in root directory and add it as below :
+POSTGRES_URL=**********
+POSTGRES_PRISMA_URL=**********
+POSTGRES_URL_NON_POOLING=**********
+POSTGRES_USER=**********
+POSTGRES_HOST=**********
+POSTGRES_PASSWORD=**********
+POSTGRES_DATABASE=**********
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+To run the app locally follow these steps in order :
+
+1. npm i
+2. npx prisma migrate dev --name init (Prisma will seed the connected database with the required tables)
+3. npm run dev
+4. You are good to go!
+
+Notes on DB design : 
+
+The database I chose for this project was Postgres, as it provides ACID transactions with Isolation Levels and is also a good fit for Structured Data.
+
+The main query to mention about here would be the query for creating a Transaction. The idea is to implement an Isolation Level of REPEATBLE READ, to ensure when creating a Transaction, any other process creating a transaction on the same wallet will be locked out, until the first one commits or rollbacks. This ensures consistency in the database in case of concurrent requests, in exchange for performance. 
+
+
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
