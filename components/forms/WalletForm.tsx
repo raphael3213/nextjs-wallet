@@ -22,7 +22,7 @@ function WalletForm() {
   const queryClient = useQueryClient();
   const WalletValidation = z.object({
     name: z.string().min(1),
-    balance: z.coerce.number().min(1).optional(),
+    balance: z.coerce.number().optional(),
   });
 
   const form = useForm<z.infer<typeof WalletValidation>>({

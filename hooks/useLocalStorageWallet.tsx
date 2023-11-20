@@ -14,10 +14,6 @@ function useLocalStorageWallet() {
     },
   });
 
-  if (isError) {
-    console.log(data);
-  }
-
   return { data, isLoading, isError, isSuccess };
 }
 
