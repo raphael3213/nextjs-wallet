@@ -1,5 +1,9 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+The App is hosted at :
+
+https://nextjs-wallet-h5cx.vercel.app/
+
 The API Collection is documented in this postman document : 
 
 https://documenter.getpostman.com/view/29224684/2s9Ye8gEuq
