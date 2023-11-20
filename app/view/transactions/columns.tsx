@@ -74,7 +74,7 @@ export const columns: ColumnDef<TransactionColumn>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Amount
+          Created At
           <ArrowUpDown className="h-4 w-4" />
         </Button>
       );
