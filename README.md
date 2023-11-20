@@ -24,10 +24,11 @@ POSTGRES_DATABASE=**********
 
 To run the app locally follow these steps in order :
 
-1. npm i
-2. npx prisma migrate dev --name init (Prisma will seed the connected database with the required tables)
-3. npm run dev
-4. You are good to go!
+1. Use Node 18
+2. npm i
+3. npx prisma migrate dev --name init (Prisma will seed the connected database with the required tables)
+4. npm run dev
+5. You are good to go!
 
 Notes on DB design : 
 
