@@ -19,11 +19,11 @@ import toast from "react-hot-toast";
 import { isErrorType } from "@/lib/type-guards/error.type-guard";
 
 function WalletForm() {
+  const queryClient = useQueryClient();
   const WalletValidation = z.object({
     name: z.string().min(1),
     balance: z.coerce.number().min(1).optional(),
   });
-  const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof WalletValidation>>({
     resolver: zodResolver(WalletValidation),
@@ -45,6 +45,7 @@ function WalletForm() {
       localStorage.setItem("wallet", wallet.ksuid);
       queryClient.invalidateQueries({ queryKey: ["wallet"] });
       queryClient.invalidateQueries({ queryKey: ["walletTotal"] });
+      toast.success("Wallet Created");
     },
     onError: async (error) => {
       toast.error(error.message);

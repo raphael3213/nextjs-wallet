@@ -54,7 +54,6 @@ function TransactionForm({ walletKsuid }: { walletKsuid: string }) {
         queryKey: ["walletTotal"],
       });
       toast.success("Transaction created");
-      //show toaster message
     },
     onError: (error) => {
       toast.error(error.message);
@@ -121,16 +120,16 @@ function TransactionForm({ walletKsuid }: { walletKsuid: string }) {
                     required
                   >
                     <FormItem className="flex gap-2 justify-start items-center">
-                      <FormControl>
+                      <FormControl className="mt-[6px]">
                         <RadioGroupItem value="DEBIT" />
                       </FormControl>
-                      <FormLabel className="mt-0">Debit</FormLabel>
+                      <FormLabel>Debit</FormLabel>
                     </FormItem>
                     <FormItem className="flex gap-2 justify-start items-center">
-                      <FormControl>
+                      <FormControl className="mt-[6px]">
                         <RadioGroupItem value="CREDIT" />
                       </FormControl>
-                      <FormLabel className="mt-0">Credit</FormLabel>
+                      <FormLabel>Credit</FormLabel>
                     </FormItem>
                   </RadioGroup>
                 </FormControl>

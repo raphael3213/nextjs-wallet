@@ -6,6 +6,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import React from "react";
 import toast from "react-hot-toast";
+import WalletTotal from "../cards/WalletTotal";
 
 function Navbar() {
   const {
@@ -15,31 +16,19 @@ function Navbar() {
     isError: isWalletError,
   } = useLocalStorageWallet();
 
-  const { data, isLoading, isSuccess } = useQuery({
-    queryKey: ["walletTotal"],
-    queryFn: async () => {
-      if (walletKsuid) {
-        const wallet = await fetchWallet(walletKsuid);
-        if (isErrorType(wallet)) {
-          toast.error(wallet.errorMessage);
-          throw new Error(wallet.errorMessage);
-        }
-        return wallet;
-      }
-      return null;
-    },
-    enabled: isWalletSuccess && walletKsuid != null,
-  });
-
   return (
     <div className="bg-black w-full p-4 flex items-center justify-between fixed">
       <div className="text-white flex gap-4">
-        <Link href={"/"}>Home Page</Link>
-        <Link href={"/view/transactions"}>Show Transactions</Link>
+        <Link className="hover:text-yellow-300" href={"/"}>
+          Home Page
+        </Link>
+        <Link className="hover:text-yellow-300" href={"/view/transactions"}>
+          Show Transactions
+        </Link>
       </div>
       <div className="text-white">
-        {isWalletLoading || isLoading ? null : isSuccess && data ? (
-          <>Wallet Balance : {data?.balance?.toString()}</>
+        {isWalletSuccess && walletKsuid != null ? (
+          <WalletTotal walletKsuid={walletKsuid} />
         ) : (
           <></>
         )}

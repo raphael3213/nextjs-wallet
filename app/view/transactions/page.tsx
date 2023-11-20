@@ -7,6 +7,7 @@ import useLocalStorageWallet from "@/hooks/useLocalStorageWallet";
 import { fetchAllTransaction } from "@/lib/actions/transaction.actions";
 import { isErrorType } from "@/lib/type-guards/error.type-guard";
 import toast from "react-hot-toast";
+import TransactionTable from "@/components/tables/TransactionTable";
 
 export default function Page() {
   const {
@@ -15,54 +16,27 @@ export default function Page() {
     isLoading: isWalletLoading,
     isError: isWalletError,
   } = useLocalStorageWallet();
-  const { data, isLoading, isError, isSuccess } = useQuery({
-    queryKey: ["transactions"],
-    queryFn: async () => {
-      if (walletKsuid) {
-        const transaction = await fetchAllTransaction(walletKsuid, 0);
-        if (isErrorType(transaction)) {
-          toast.error(transaction.errorMessage);
-          throw new Error(transaction.errorMessage);
-        }
-        return transaction;
-      } else {
-        toast.error("No wallet initialized");
-      }
-    },
-    enabled: isWalletSuccess && walletKsuid != null,
-  });
 
-  if (isWalletError || (isWalletSuccess && walletKsuid == null)) {
-    toast.error("No wallet initialized");
+  if (isWalletLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        Please initialize a wallet
+        Loading
       </div>
     );
-  } else if (isError) {
+  }
+
+  if (isWalletError) {
     return (
-      <div className="flex justify-center items-cente">
-        Error in loading Table
-      </div>
+      <div className="flex justify-center items-center min-h-screen">Error</div>
     );
-  } else if (isWalletSuccess && isSuccess) {
-    return (
-      <div className="container mx-auto py-24 flex gap-3 flex-col">
-        <h1 className="text-2xl">Transaction Table</h1>
-        {isLoading || isWalletLoading ? (
-          <div className="flex justify-center items-center">
-            {" "}
-            Loading Table{" "}
-          </div>
-        ) : (
-          <DataTable columns={columns} data={data as TransactionColumn[]} />
-        )}
-      </div>
-    );
+  }
+
+  if (isWalletSuccess && walletKsuid != null) {
+    return <TransactionTable walletKsuid={walletKsuid} />;
   } else {
     return (
-      <div className="flex justify-center items-cente">
-        Error in loading Page
+      <div className="flex justify-center items-center min-h-screen">
+        Please initialize wallet
       </div>
     );
   }
