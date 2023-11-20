@@ -11,11 +11,11 @@ export async function GET(request: NextRequest) {
 
     const walletKsuidSchema = z.string().min(1);
     const walletKsuid = walletKsuidSchema.parse(params.get("walletId"));
-    const skipSchemma = z.coerce.number().min(0);
-    const skip = skipSchemma.parse(params.get("skip"));
-    const limitSchemma = z.coerce.number().min(1);
-    const limit = limitSchemma.parse(params.get("limit"));
-
+    const skipSchema = z.coerce.number().min(0);
+    const skip = skipSchema.parse(params.get("skip"));
+    const limitSchema = z.coerce.number().min(0);
+    const limitValue = limitSchema.parse(params.get("limit"));
+    const limit = limitValue === 0 ? 10 : limitValue;
     const transactions = await fetchAllTransaction(walletKsuid, skip, limit);
     if (isErrorType(transactions)) {
       return NextResponse.json(
