@@ -7,12 +7,19 @@ https://documenter.getpostman.com/view/29224684/2s9Ye8gEuq
 ## Getting Started
 
 Set up .env file in root directory and add it as below :
+
 POSTGRES_URL=**********
+
 POSTGRES_PRISMA_URL=**********
+
 POSTGRES_URL_NON_POOLING=**********
+
 POSTGRES_USER=**********
+
 POSTGRES_HOST=**********
+
 POSTGRES_PASSWORD=**********
+
 POSTGRES_DATABASE=**********
 
 To run the app locally follow these steps in order :
