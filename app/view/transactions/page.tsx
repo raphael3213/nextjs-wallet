@@ -7,7 +7,6 @@ import useLocalStorageWallet from "@/hooks/useLocalStorageWallet";
 import { fetchAllTransaction } from "@/lib/actions/transaction.actions";
 import { isErrorType } from "@/lib/type-guards/error.type-guard";
 import toast from "react-hot-toast";
-import { redirect } from "next/navigation";
 
 export default function Page() {
   const {
@@ -26,31 +25,45 @@ export default function Page() {
           throw new Error(transaction.errorMessage);
         }
         return transaction;
+      } else {
+        toast.error("No wallet initialized");
       }
     },
-    enabled: isWalletSuccess,
+    enabled: isWalletSuccess && walletKsuid != null,
   });
 
-  if (isWalletError) {
-    redirect("/");
-  }
-
-  if (isError) {
+  if (isWalletError || (isWalletSuccess && walletKsuid == null)) {
+    toast.error("No wallet initialized");
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        Please initialize a wallet
+      </div>
+    );
+  } else if (isError) {
     return (
       <div className="flex justify-center items-cente">
         Error in loading Table
       </div>
     );
+  } else if (isWalletSuccess && isSuccess) {
+    return (
+      <div className="container mx-auto py-24 flex gap-3 flex-col">
+        <h1 className="text-2xl">Transaction Table</h1>
+        {isLoading || isWalletLoading ? (
+          <div className="flex justify-center items-center">
+            {" "}
+            Loading Table{" "}
+          </div>
+        ) : (
+          <DataTable columns={columns} data={data as TransactionColumn[]} />
+        )}
+      </div>
+    );
+  } else {
+    return (
+      <div className="flex justify-center items-cente">
+        Error in loading Page
+      </div>
+    );
   }
-
-  return (
-    <div className="container mx-auto py-10 flex gap-3 flex-col">
-      <h1 className="text-2xl">Transaction Table</h1>
-      {isLoading || isWalletLoading ? (
-        <div className="flex justify-center items-center"> Loading Table </div>
-      ) : (
-        <DataTable columns={columns} data={data as TransactionColumn[]} />
-      )}
-    </div>
-  );
 }

@@ -41,9 +41,10 @@ function WalletForm() {
       }
       return wallet;
     },
-    onSuccess: (wallet) => {
+    onSuccess: async (wallet) => {
       localStorage.setItem("wallet", wallet.ksuid);
       queryClient.invalidateQueries({ queryKey: ["wallet"] });
+      queryClient.invalidateQueries({ queryKey: ["walletTotal"] });
     },
     onError: async (error) => {
       toast.error(error.message);

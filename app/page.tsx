@@ -14,7 +14,9 @@ export default function Home() {
     );
   }
   if (isError) {
-    return <div>Error</div>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">Error</div>
+    );
   }
 
   return (

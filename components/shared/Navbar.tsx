@@ -26,8 +26,9 @@ function Navbar() {
         }
         return wallet;
       }
+      return null;
     },
-    enabled: isWalletSuccess,
+    enabled: isWalletSuccess && walletKsuid != null,
   });
 
   return (
@@ -37,8 +38,11 @@ function Navbar() {
         <Link href={"/view/transactions"}>Show Transactions</Link>
       </div>
       <div className="text-white">
-        Wallet Balance :{" "}
-        {isWalletLoading || isLoading ? "Loading" : data?.balance?.toString()}
+        {isWalletLoading || isLoading ? null : isSuccess && data ? (
+          <>Wallet Balance : {data?.balance?.toString()}</>
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );
