@@ -62,6 +62,7 @@ export async function createTransaction(
           },
           data: {
             balance: Number(wallet.balance) + transactionAmount,
+            updatedAt: transactionTime,
           },
         });
         return {
